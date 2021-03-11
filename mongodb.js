@@ -1,22 +1,22 @@
-const mongodb = require("mongodb")
-const {MongoClient, ObjectID} = require("mongodb")
-const connectionURL = "mongodb://127.0.0.1:27017";
-const databaseName = "task-manager";
+// const mongodb = require("mongodb")
+// const {MongoClient, ObjectID} = require("mongodb")
+// const connectionURL = "mongodb://127.0.0.1:27017";
+// const databaseName = "task-manager";
 
-const id = new ObjectID
-const time = id.getTimestamp();
+// const id = new ObjectID
+// const time = id.getTimestamp();
 
-console.log(time)
-console.log(id.id.length)
-console.log(id.toHexString().length)
+// console.log(time)
+// console.log(id.id.length)
+// console.log(id.toHexString().length)
 
-// callback function is called when connect to mongodb.Db. Connection is not async. It is syncronous and takes time to set up connection
-MongoClient.connect(connectionURL,  {useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
-  if (error) {
-    return console.log("unable to connect to DB")
-  }
+// // callback function is called when connect to mongodb.Db. Connection is not async. It is syncronous and takes time to set up connection
+// MongoClient.connect(connectionURL,  {useNewUrlParser: true, useUnifiedTopology: true }, (error, client) => {
+//   if (error) {
+//     return console.log("unable to connect to DB")
+//   }
 
-const db = client.db(databaseName)
+// const db = client.db(databaseName)
 
 // db.collection('users').findOne({name: "John"}, (error, user) => {
 //   if(error) {
@@ -45,7 +45,7 @@ const db = client.db(databaseName)
 //   { completed: true}
 //  }).then(result => console.log(result)).catch(error => console.log(error))
 
- db.collection('tasks').deleteOne({description: "complete the node course"}).then(result => console.log(result)).catch(error => console.log(error))
+//  db.collection('tasks').deleteOne({description: "complete the node course"}).then(result => console.log(result)).catch(error => console.log(error))
 
 
 
@@ -91,5 +91,7 @@ const db = client.db(databaseName)
 //   console.log(result.ops)
 
 // })
-})
+
+
+// })
 
