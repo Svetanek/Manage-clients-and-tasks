@@ -6,9 +6,9 @@ router.post('/users', async (req, res) => {
   const user = new User(req.body)
   try {
     console.log("BODY", req.body)
-
-    await user.save()
-    res.status(201).send(user)
+    await user.save();
+    const token = await user.generateAuthToken();
+    res.status(201).send({user, token})
   } catch (error) {
     res.status(400).send(error)
   }
@@ -17,6 +17,25 @@ router.post('/users', async (req, res) => {
 //   }).catch((e) => {res.status(400).send(e)})
 
 })
+
+
+ //findByCredentials - custom method
+router.post('/users/login', async (req, res) => {
+  try {
+
+    const user = await User.findByCredentials(req.body.email, req.body.password);
+    const token = await user.generateAuthToken()
+
+    res.send({user, token})
+
+  } catch (error) {
+res.status(400).send()
+  }
+
+
+})
+
+
 
 router.get('/users/:id', async (req, res, next) => {
   try {
@@ -48,16 +67,19 @@ router.get('/users/:id', async (req, res, next) => {
 //optional parameters -- to return new updated object
  router.patch('/users/:id', async (req, res, next) => {
    const allowedParametersForUpdates = ["name", "email", "age", "password"]
-   const updates = Object.keys(req.body);
-   const isValidUpdate = updates.every(item => allowedParametersForUpdates.includes(item))
+   const updatesFields = Object.keys(req.body);
+   console.log("")
+   const isValidUpdate = updatesFields.every(item => allowedParametersForUpdates.includes(item))
    if(!isValidUpdate) {
      return res.status(400).send({error: "invalid updates"})
    }
    try {
-     const user = await User.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true})
-     if(!user) {
-       return res.status(404).send("user not found")
-     }
+    const user = await User.findById(req.params.id);
+    if(!user) {
+      return res.status(404).send("user not found")
+    }
+    updatesFields.forEach(field => user[field] = req.body[field])
+    await user.save()
    res.send(user)
    } catch (error) {
    res.status(400).send(error)

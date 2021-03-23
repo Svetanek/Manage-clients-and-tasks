@@ -22,4 +22,30 @@ app.listen(port, () => {
   console.log(`Server is up on port ${port}`)
 })
 
+// const bcrypt = require('bcryptjs')
+// const myFunction = async() => {
+//   const pass = 'pa55word';
+//   //8 => number of rounds
+//   //with encryption we get original value back
+//   const hashedPass = await bcrypt.hash(pass, 8);
+//   const isMatch = await bcrypt.compare( "pa55word", hashedPass)
+//   console.log('pass', pass);
+//   console.log('HASHED', hashedPass);
+
+// }
+
+// myFunction()
+
+const jwt = require("jsonwebtoken")
+
+const myFunc = async () => {
+  const token = jwt.sign({_id: "12345"}, "thesecretphrase", {expiresIn: "2 weeks"});
+  console.log(token)
+  const data = jwt.verify(token, "thesecretphrase");
+  console.log("DATA", data)
+
+}
+myFunc()
+
+
 //https://mongoosejs.com/docs/queries.html

@@ -41,16 +41,19 @@ router.post('/clients',async (req, res) => {
 
  router.patch('/clients/:id', async (req, res, next) => {
   const allowedParametersForUpdates = ["firstName", "lastName", "address", "phoneNumber", "email", "doB", "product", "amount"]
-  const updates = Object.keys(req.body);
-  const isValidUpdate = updates.every(item => allowedParametersForUpdates.includes(item))
+  const updatesFields = Object.keys(req.body);
+  const isValidUpdate = updatesFields.every(item => allowedParametersForUpdates.includes(item))
   if(!isValidUpdate) {
     return res.status(400).send({error: "invalid updates"})
   }
   try {
-    const client = await Client.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true})
+    const client = await Client.findById(req.params.id)
+    // const client = await Client.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true})
     if(!client) {
       return res.status(404).send("client not found")
     }
+    updatesFields.forEach(field => client[field] = req.body[field])
+    await client.save()
   res.send(client)
   } catch (error) {
   res.status(400).send(error)
