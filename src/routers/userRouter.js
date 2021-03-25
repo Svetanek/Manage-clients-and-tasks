@@ -22,7 +22,7 @@ router.post('/users', async (req, res) => {
 
 
  //findByCredentials - custom method
-router.post('/users/login', async (req, res) => {
+router.post('/users/login', async (req, res, next) => {
   try {
     const user = await User.findByCredentials(req.body.email, req.body.password);
     const token = await user.generateAuthToken()
@@ -33,11 +33,36 @@ router.post('/users/login', async (req, res) => {
 res.status(400).send()
   }
 })
+
+router.post("/users/logout", auth, async (req, res, next) => {
+  try {
+
+    req.user.tokens = req.user.tokens.filter(token => token !== req.token);
+    req.user.save();
+    res.send("you are logged out")
+  } catch (error) {
+    res.status(500).send()
+
+  }
+})
+router.post("/users/logoutAll", auth, async (req, res, next) => {
+  try {
+
+    req.user.tokens = [];
+    req.user.save();
+    res.send("you are logged off")
+  } catch (error) {
+    res.status(500).send()
+
+  }
+})
+
 //users/me has to be above users/:id
  //it will call the third argument when the middleware calls the next() function
 router.get('/users/me', auth, async (req, res) => {
   res.send(req.user)
   })
+
 
 router.get('/users/:id', async (req, res, next) => {
   try {
