@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router()
+const auth = require('../middleware/auth')
 const User = require('../models/userModel')
 
 router.post('/users', async (req, res) => {
@@ -12,17 +13,17 @@ router.post('/users', async (req, res) => {
   } catch (error) {
     res.status(400).send(error)
   }
+})
 //  user.save().then(() => {
 //    res.status(201).send(user)
 //   }).catch((e) => {res.status(400).send(e)})
 
-})
+
 
 
  //findByCredentials - custom method
 router.post('/users/login', async (req, res) => {
   try {
-
     const user = await User.findByCredentials(req.body.email, req.body.password);
     const token = await user.generateAuthToken()
 
@@ -31,11 +32,12 @@ router.post('/users/login', async (req, res) => {
   } catch (error) {
 res.status(400).send()
   }
-
-
 })
-
-
+//users/me has to be above users/:id
+ //it will call the third argument when the middleware calls the next() function
+router.get('/users/me', auth, async (req, res) => {
+  res.send(req.user)
+  })
 
 router.get('/users/:id', async (req, res, next) => {
   try {
@@ -55,14 +57,16 @@ router.get('/users/:id', async (req, res, next) => {
   }
  })
 
- router.get('/users', async (req, res) => {
-  try {
-    const users = await User.find({})
-    res.send(users)
-  } catch (error) {
-    res.status(500).send()
-  }
- })
+//  router.get('/users', auth, async (req, res, next) => {
+//   try {
+//     const users = await User.find({})
+//     res.send(users)
+//   } catch (error) {
+//     res.status(500).send()
+//   }
+//  })
+
+
 
 //optional parameters -- to return new updated object
  router.patch('/users/:id', async (req, res, next) => {

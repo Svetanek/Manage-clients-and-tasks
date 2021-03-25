@@ -9,6 +9,22 @@ const clientRouter = require('./routers/clientRouter')
 const app = express();
 const port = process.env.port || 3000
 
+//next is called to let know that we are done
+// app.use((req, res, next) => {
+//   if(req.method === "GET") {
+//     res.send("GET requests are temporarily disabled");
+//   }
+//   else {
+//     next()
+//   }
+// })
+
+// app.use((req, res, next) => {
+//     res.status(503).send("the site is under maintenance. Please come back later");
+// })
+
+
+
 // express parses incoming json data so it will be accessable as an object
 app.use(express.json())
 app.use(userRouter)
