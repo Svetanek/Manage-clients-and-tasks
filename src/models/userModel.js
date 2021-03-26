@@ -48,7 +48,32 @@ tokens: [{
   }
 }]
 })
-//custom instance method
+
+userSchema.virtual('tasks', {
+  ref: 'Task',
+  localField: '_id',
+  foreignField: 'owner'
+})
+//make sure to use old style syntax for functions to h=get access to this
+//custom instance methods
+// userSchema.methods.getPublicProfile = function() {
+//   const user = this;
+//   const userObject = user.toObject();
+//   delete userObjecr.tokens;
+//   delete userObject.password;
+//   return userObject;
+// }
+
+//use that fact that express stringifies object and call that method also behind the scene
+userSchema.methods.toJSON = function() {
+  const user = this;
+  const userObject = user.toObject();
+  delete userObject.tokens;
+  delete userObject.password;
+  return userObject;
+}
+
+
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
   const token = await jwt.sign({_id: user._id.toString()}, "thesecretphrase", {expiresIn: "2 weeks"});

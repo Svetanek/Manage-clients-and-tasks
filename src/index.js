@@ -4,7 +4,8 @@ require('./db/mongoose')
 
 const userRouter = require('./routers/userRouter')
 const taskRouter = require('./routers/taskRouter')
-const clientRouter = require('./routers/clientRouter')
+const clientRouter = require('./routers/clientRouter');
+const { models } = require('mongoose');
 
 const app = express();
 const port = process.env.port || 3000
@@ -52,16 +53,29 @@ app.listen(port, () => {
 
 // myFunction()
 
-const jwt = require("jsonwebtoken")
+// const jwt = require("jsonwebtoken")
 
-const myFunc = async () => {
-  const token = jwt.sign({_id: "12345"}, "thesecretphrase", {expiresIn: "2 weeks"});
-  console.log(token)
-  const data = jwt.verify(token, "thesecretphrase");
-  console.log("DATA", data)
+// const myFunc = async () => {
+//   const token = jwt.sign({_id: "12345"}, "thesecretphrase", {expiresIn: "2 weeks"});
+//   console.log(token)
+//   const data = jwt.verify(token, "thesecretphrase");
+//   console.log("DATA", data)
 
+// }
+// myFunc()
+
+
+const Task = require('./models/taskModel');
+const User = require('./models/userModel')
+const refFunc = async () => {
+  // const task = await Task.findById('605d08eae5d9e673e291e1f1');
+  // await task.populate('owner').execPopulate();
+  // console.log(task.owner)
+  const user = await User.findById('605ccec60b346e6aef54ad3b');
+  await user.populate('tasks').execPopulate();
+  console.log(user.tasks)
 }
-myFunc()
+refFunc()
 
 
 //https://mongoosejs.com/docs/queries.html
