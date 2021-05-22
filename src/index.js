@@ -65,17 +65,17 @@ app.listen(port, () => {
 // myFunc()
 
 
-const Task = require('./models/taskModel');
-const User = require('./models/userModel')
-const refFunc = async () => {
-  // const task = await Task.findById('605d08eae5d9e673e291e1f1');
-  // await task.populate('owner').execPopulate();
-  // console.log(task.owner)
-  const user = await User.findById('605ccec60b346e6aef54ad3b');
-  await user.populate('tasks').execPopulate();
-  console.log(user.tasks)
-}
-refFunc()
+// const Task = require('./models/taskModel');
+// const User = require('./models/userModel')
+// const refFunc = async () => {
+//   // const task = await Task.findById('605d08eae5d9e673e291e1f1');
+//   // await task.populate('owner').execPopulate();
+//   // console.log(task.owner)
+//   const user = await User.findById('605ccec60b346e6aef54ad3b');
+//   await user.populate('tasks').execPopulate();
+//   console.log(user.tasks)
+// }
+// refFunc()
 
 
 //https://mongoosejs.com/docs/queries.html

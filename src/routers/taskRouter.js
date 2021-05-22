@@ -4,6 +4,7 @@ const auth = require('../middleware/auth')
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');
 
+
 router.post('/tasks',auth, async (req, res) => {
   try {
     // const task = new Task(req.body)
@@ -18,13 +19,39 @@ router.post('/tasks',auth, async (req, res) => {
   //  }).catch((e) => {res.status(400).send(e)})
 
  })
- router.get('/tasks', auth, async (req, res) => {
-  try {
-    // const tasks = await Task.find({}); //without auth
-    // const tasks = await Task.find({owner: req.user._id}) //with auth
-    await req.user.populate('tasks').execPopulate();
 
+ //GET/tasks?completed=false
+ // PAGINATION:
+ //GET/tasks?limit=10&skip=0
+ router.get('/tasks', auth, async (req, res) => {
+
+  try {
+    const match ={};
+    if (req.user.completed || req.query.completed === "false") {
+      match.completed = req.user.completed === "true"
+    }
+
+    // const tasks = await Task.find({}); //without auth
+    // const tasks = await Task.find({owner: req.user._id, completed: req.query.completed})
+    //with auth
+    // await req.user.populate('tasks').execPopulate();
+//Populate and execPopulate are similar to join using foreign/primary key in SQL
+
+    await req.user.populate({
+      path: 'tasks',
+      match,
+      // match: {
+      //   completed: req.query.completed === "true"
+      // },
+      options: {
+        limit: parseInt(req.query.limit),
+        skip: parseInt(req.query.skip)
+      }
+    }).execPopulate();
     res.send(req.user.tasks)
+
+    // const tasks = await Task.find({owner: req.user._id, completed: req.query.completed})
+    // res.send(tasks)
   } catch (error) {
     res.status(500).send()
   }
