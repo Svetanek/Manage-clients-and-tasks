@@ -23,12 +23,22 @@ router.post('/tasks',auth, async (req, res) => {
  //GET/tasks?completed=false
  // PAGINATION:
  //GET/tasks?limit=10&skip=0
+ //GET/tasks?sortBy=createdAt_desc OR //GET/tasks?sortBy=createdAt:desc
+//     sort: {
+//   createdAt: 1 ---> ascending; -1 ----> descending
+// }
  router.get('/tasks', auth, async (req, res) => {
 
   try {
     const match ={};
-    if (req.user.completed || req.query.completed === "false") {
+    const sort = {};
+    if (req.query.completed || req.query.completed === "false") {
       match.completed = req.user.completed === "true"
+    }
+
+    if (req.query.sortBy) {
+     const parts = req.query.sortBy.split(':')
+     sort[parts[0]] = parts[1] === "desc"? -1 : 1
     }
 
     // const tasks = await Task.find({}); //without auth
@@ -45,7 +55,14 @@ router.post('/tasks',auth, async (req, res) => {
       // },
       options: {
         limit: parseInt(req.query.limit),
-        skip: parseInt(req.query.skip)
+        skip: parseInt(req.query.skip),
+        sort
+        // sort: {
+
+        //   createdAt: 1,
+        //   completed: 1
+        //   // uncompleted - first, completed - next
+        // }
       }
     }).execPopulate();
     res.send(req.user.tasks)
