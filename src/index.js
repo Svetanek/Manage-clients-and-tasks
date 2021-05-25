@@ -28,11 +28,25 @@ const upload = multer({
      cb(undefined, true)
   }
 })
-//to set endpoint where client will be able to upload his files
+//to set endpoint where client will be able to upload his files with upload middleware
+// app.post('/upload', upload.single('upload'), (req, res) => {
+
+//   res.send()
+// })
+
+//to set endpoint where client will be able to upload his files with upload middleware and send error message to the browser
+// const errorMiddleware = (req, res, next) => {
+//   throw new Error('Error from my middleware')
+// }
+
 app.post('/upload', upload.single('upload'), (req, res) => {
 
   res.send()
-})
+},(error, req, res, next) => {
+  res.status(400).send({error: error.message})
+}
+
+)
 
 
 //next is called to let know that we are done
