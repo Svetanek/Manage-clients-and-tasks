@@ -3,6 +3,27 @@ const router = express.Router()
 const auth = require('../middleware/auth')
 const User = require('../models/userModel')
 
+const multer = require('multer')
+//to st configuration for destination where all uploads will be stored
+//limit 1000000 bytes = 1MB
+const upload = multer({
+  dest: 'avatars',
+  limits: {
+    fileSize: 1000000
+  },
+  fileFilter(req, file, cb) {
+    // if(!file.originalname.endsWith('.pdf')) {
+    //   return cb('File must be in PDF format')
+    // }
+    if(!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error('Please upload the image'))
+    }
+     cb(undefined, true)
+  }
+})
+
+
+
 router.post('/users', async (req, res) => {
   const user = new User(req.body)
   try {
@@ -128,5 +149,11 @@ router.get('/users/me', auth, async (req, res) => {
      res.status(500).send()
    }
  })
+
+  router.post('/users/me/avatar', upload.single('avatar'),  (req, res) => [
+    res.send()
+  ])
+
+
 
 module.exports = router
