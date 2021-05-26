@@ -10,43 +10,39 @@ const { models } = require('mongoose');
 const app = express();
 const port = process.env.port || 3000
 
-const multer = require('multer')
-//to st configuration for destination where all uploads will be stored
-// if(!file.originalname.endsWith('.pdf')) {
-//   return cb('File must be in PDF format')
-// }
 
-const upload = multer({
-  dest: 'images',
-  limits: {
-    fileSize: 1000000
-  },
-  fileFilter(req, file, cb) {
-    if(!file.originalname.match(/\.(doc|docx)$/)) {
-      return cb(new Error('File must be in Word format'))
-    }
-     cb(undefined, true)
-  }
-})
-//to set endpoint where client will be able to upload his files with upload middleware
+//SENDING FILES
+// const multer = require('multer')
+
+// const upload = multer({
+//   dest: 'images',
+//   limits: {
+//     fileSize: 1000000
+//   },
+//   fileFilter(req, file, cb) {
+//     if(!file.originalname.match(/\.(doc|docx)$/)) {
+//       return cb(new Error('File must be in Word format'))
+//     }
+//      cb(undefined, true)
+//   }
+// })
+
+//To set endpoint where client will be able to upload his files with upload middleware
 // app.post('/upload', upload.single('upload'), (req, res) => {
 
 //   res.send()
 // })
 
-//to set endpoint where client will be able to upload his files with upload middleware and send error message to the browser
-// const errorMiddleware = (req, res, next) => {
-//   throw new Error('Error from my middleware')
+//To set endpoint where client will be able to upload his files with upload middleware and send error message to the browser
+
+// app.post('/upload', upload.single('upload'), (req, res) => {
+
+//   res.send()
+// },(error, req, res, next) => {
+//   res.status(400).send({error: error.message})
 // }
 
-app.post('/upload', upload.single('upload'), (req, res) => {
-
-  res.send()
-},(error, req, res, next) => {
-  res.status(400).send({error: error.message})
-}
-
-)
+// )
 
 
 //next is called to let know that we are done

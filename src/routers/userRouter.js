@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router()
 const auth = require('../middleware/auth')
 const User = require('../models/userModel')
-
+const sharp = require('sharp')
 const multer = require('multer')
-//to st configuration for destination where all uploads will be stored
+//to set configuration for destination where all uploads will be stored
 //limit 1000000 bytes = 1MB
 const upload = multer({
   // dest: 'avatars',
@@ -151,7 +151,8 @@ router.get('/users/me', auth, async (req, res) => {
  })
 //req.file.file contains all binary data about the file. available only if dest option in multer is not set up.
   router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    req.user.avatar = req.file.buffer
+    const buffer = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
+    req.user.avatar = buffer;
     await req.user.save()
     res.send(),
     (error, req, res, next) => {
@@ -176,7 +177,7 @@ router.get('/users/me', auth, async (req, res) => {
    }
    else {
     //  res.set('Content_Type', 'application/json')
-     res.set('Content-Type','image/jpg')
+     res.set('Content-Type','image/png')
      res.send(user.avatar)
  }
 
