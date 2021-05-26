@@ -7,7 +7,7 @@ const multer = require('multer')
 //to st configuration for destination where all uploads will be stored
 //limit 1000000 bytes = 1MB
 const upload = multer({
-  dest: 'avatars',
+  // dest: 'avatars',
   limits: {
     fileSize: 1000000
   },
@@ -149,14 +149,41 @@ router.get('/users/me', auth, async (req, res) => {
      res.status(500).send()
    }
  })
-
-  router.post('/users/me/avatar', upload.single('avatar'),  (req, res) => [
+//req.file.file contains all binary data about the file. available only if dest option in multer is not set up.
+  router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    req.user.avatar = req.file.buffer
+    await req.user.save()
     res.send(),
     (error, req, res, next) => {
       res.status(400).send({error: error.message})
     }
-  ])
+  })
 
+
+
+
+  router.delete('/users/me/avatar', auth, async (req, res) => {
+    req.user.avatar = undefined;
+    await req.user.save()
+    res.send()
+
+  })
+  router.get('/users/:id/avatar', async (req, res) => {
+ try {
+   const user = await User.findById(req.params.id)
+   if(!user || !user.avatar) {
+     throw new Error()
+   }
+   else {
+    //  res.set('Content_Type', 'application/json')
+     res.set('Content-Type','image/jpg')
+     res.send(user.avatar)
+ }
+
+ } catch (error) {
+  res.status(404).send()
+ }
+  })
 
 
 module.exports = router
