@@ -4,6 +4,7 @@ const auth = require('../middleware/auth')
 const User = require('../models/userModel')
 const sharp = require('sharp')
 const multer = require('multer')
+const {sendWelcomeEmail, goodbyeEmail} = require('../emails/account')
 //to set configuration for destination where all uploads will be stored
 //limit 1000000 bytes = 1MB
 const upload = multer({
@@ -28,6 +29,7 @@ router.post('/users', async (req, res) => {
   const user = new User(req.body)
   try {
     await user.save();
+    sendWelcomeEmail(user.email, user.name)
     const token = await user.generateAuthToken();
     res.status(201).send({user, token})
   } catch (error) {
@@ -142,7 +144,9 @@ router.get('/users/me', auth, async (req, res) => {
     //  if(!user) {
     //   return res.status(404).send("user not found")
     // }
-    await req.user.remove()
+
+    await req.user.deleteOne({_id: req.user._id})
+    goodbyeEmail(req.user.email, req.user.name)
   res.send(req.user)
 
    } catch (error) {
