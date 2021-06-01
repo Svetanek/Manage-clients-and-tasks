@@ -84,7 +84,7 @@ userSchema.methods.toJSON = function() {
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = await jwt.sign({_id: user._id.toString()}, "thesecretphrase", {expiresIn: "2 weeks"});
+  const token = await jwt.sign({_id: user._id.toString()}, process.env.JWT_SECRET, {expiresIn: "2 weeks"});
    //When the argument is not an array, concat adds it as a whole, while ... tries to iterate it and fails if it can't.
    user.tokens = user.tokens.concat({token})
    // user.tokens = [...user.tokens, ...{token}]

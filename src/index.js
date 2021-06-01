@@ -8,7 +8,8 @@ const clientRouter = require('./routers/clientRouter');
 const { models } = require('mongoose');
 
 const app = express();
-const port = process.env.port || 3000
+
+const port = process.env.PORT
 
 
 //SENDING FILES
